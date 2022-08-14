@@ -9,6 +9,10 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "ctest-lab" is now active!');
 
+	let log_channel = vscode.window.createOutputChannel('CTest');
+	context.subscriptions.push(log_channel);
+	log_channel.appendLine("CTest Lab is available.");
+
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -41,9 +45,9 @@ export function activate(context: vscode.ExtensionContext) {
 	const lines = ctest_output.trim().split('\n');
 	for (const line of lines) {
 		if (line.trim().startsWith("Test #")) {
-			const i = line.indexOf(":")
-			const case_name = line.substring(i + 1).trim()
-			controller.items.add(controller.createTestItem(case_name, case_name))
+			const i = line.indexOf(":");
+			const case_name = line.substring(i + 1).trim();
+			controller.items.add(controller.createTestItem(case_name, case_name));
 		}
 	}
 }
