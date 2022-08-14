@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:ctest-lab.helloWorld"
+    "workspaceContains:CMakeLists.txt"
   ],
   "main": "./out/extension.js",
   "contributes": {
