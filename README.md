@@ -4,6 +4,13 @@ This is the README for your extension "ctest-lab". After writing up a brief desc
 
 ## Features
 
+### Filter by CTest Label
+
+CTest Lab discovers the `LABELS` you add to your tests via CTest properties. In
+the test view, you can filter your tests by label. For example, if you label
+your unit tests with "unit", you can type `@ctest-lab-tests:unit` to view only
+your unit tests.
+
 Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
 For example if there is an image subfolder under your extension project workspace:
