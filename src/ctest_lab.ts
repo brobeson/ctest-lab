@@ -5,7 +5,9 @@ export async function discover_tests(test_controller: vscode.TestController, log
   log_channel.append("Discovering tests... ");
   const ctest_output = JSON.parse(await run_ctest_show_only(log_channel));
   for (const test of ctest_output.tests) {
-    test_controller.items.add(test_controller.createTestItem(test.name, test.name));
+    let test_item = test_controller.createTestItem(test.name, test.name);
+    test_item.tags = get_test_tags(test.properties);
+    test_controller.items.add(test_item);
   }
   log_channel.appendLine(`found ${test_controller.items.size} tests`);
 }
@@ -62,4 +64,17 @@ function replace_code_variables(path: string): string {
     return path.replace("${workspaceFolder}", workspaceFolder);
   }
   return path;
+}
+
+
+function get_test_tags(test_properties: any): vscode.TestTag[] {
+  let tags: vscode.TestTag[] = [];
+  for (const test_property of test_properties) {
+    if (test_property.name === "LABELS") {
+      for (const label of test_property.value) {
+        tags.push(new vscode.TestTag(label));
+      }
+    }
+  }
+  return tags;
 }
