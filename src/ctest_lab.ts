@@ -49,11 +49,22 @@ function run_ctest_show_only(log_channel: vscode.OutputChannel): Promise<string>
 
 
 function get_build_directory(): string {
-  return "/home/brendan/repositories/tracking-analyzer/build";
-  let build_directory = vscode.workspace.getConfiguration("cmake").get("buildDirectory");
-  if (build_directory === undefined) {
-    build_directory = vscode.workspace.getConfiguration("ctest-lab").get("buildDirectory");
+  // return "/home/brobeson/repositories/track-fusion/build";
+  let build_directory: string = "";
+  let config = vscode.workspace.getConfiguration("cmake");
+  if (config.has("buildDirectory")) {
+    build_directory = config.get("buildDirectory") as string;
+  } else {
+    config = vscode.workspace.getConfiguration("ctest-lab");
+    build_directory = config.get("buildDirectory") as string;
   }
-  // The extension guarantees that 'ctest-lab.buildDirectory' will exist.
-  return build_directory as string;
+  return replace_code_variables(build_directory);
+}
+
+function replace_code_variables(path: string): string {
+  if (vscode.workspace.workspaceFolders) {
+    const workspaceFolder: string = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    return path.replace("${workspaceFolder}", workspaceFolder);
+  }
+  return path;
 }
