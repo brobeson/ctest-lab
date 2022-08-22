@@ -2,23 +2,18 @@ import * as vscode from "vscode";
 import { spawn } from "child_process";
 
 export async function discover_tests(test_controller: vscode.TestController, log_channel: vscode.OutputChannel) {
-  log_channel.appendLine("Discovering tests...");
-  const ctest_output = await run_ctest_show_only(log_channel);
-  const lines = ctest_output.trim().split('\n');
-  for (const line of lines) {
-    if (line.match(/\s+Test\s+#/)) {
-      const i = line.indexOf(":");
-      const case_name = line.substring(i + 1).trim();
-      test_controller.items.add(test_controller.createTestItem(case_name, case_name));
-    }
+  log_channel.append("Discovering tests... ");
+  const ctest_output = JSON.parse(await run_ctest_show_only(log_channel));
+  for (const test of ctest_output.tests) {
+    test_controller.items.add(test_controller.createTestItem(test.name, test.name));
   }
-  log_channel.appendLine(`Found ${test_controller.items.size} tests.`);
+  log_channel.appendLine(`found ${test_controller.items.size} tests`);
 }
 
+
 function run_ctest_show_only(log_channel: vscode.OutputChannel): Promise<string> {
-  log_channel.appendLine("ctest --show-only");
   return new Promise((resolve, reject) => {
-    const process = spawn("ctest", ["--show-only"], { cwd: get_build_directory() });
+    const process = spawn("ctest", ["--show-only=json-v1"], { cwd: get_build_directory() });
     let stdout = "";
     let stderr = "";
     if (process.pid) {
@@ -26,7 +21,6 @@ function run_ctest_show_only(log_channel: vscode.OutputChannel): Promise<string>
         stdout += data;
       });
       process.stdout.on("end", () => {
-        log_channel.appendLine(stdout);
         resolve(stdout);
       });
       process.stderr.on("data", data => {
@@ -60,6 +54,7 @@ function get_build_directory(): string {
   }
   return replace_code_variables(build_directory);
 }
+
 
 function replace_code_variables(path: string): string {
   if (vscode.workspace.workspaceFolders) {
