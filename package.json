@@ -16,10 +16,20 @@
   "contributes": {
     "commands": [
       {
-        "command": "ctest-lab.helloWorld",
-        "title": "Hello World"
+        "command": "ctest.discoverTests",
+        "title": "Discover Tests",
+        "category": "CTest"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "ctest-lab",
+      "properties": {
+        "ctest-lab.buildDirectory": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
