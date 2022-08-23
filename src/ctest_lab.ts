@@ -1,16 +1,46 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
 
+// https://cmake.org/cmake/help/latest/manual/ctest.1.html#show-as-json-object-model
+type CTestConfiguration = {
+  kind: "ctestInfo";
+  version: {
+    major: number;
+    minor: number;
+  };
+  backtraceGraph: {
+    commands: string[];
+    files: string[];
+    nodes: {
+      command?: number;
+      file?: number;
+      line?: number;
+      parent?: number;
+    }[];
+  };
+  tests: {
+    name: string;
+    config?: string;
+    command: string[];
+    backtrace: number;
+    properties: { name: string; value: any }[];
+  }[];
+};
+
 export async function discover_tests(test_controller: vscode.TestController, log_channel: vscode.OutputChannel) {
-  log_channel.append("Discovering tests... ");
-  const ctest_output = JSON.parse(await run_ctest_show_only(log_channel));
-  for (const test of ctest_output.tests) {
-    let test_item = test_controller.createTestItem(test.name, test.name);
-    test_item.tags = get_test_tags(test.properties);
-    test_item.description = get_test_description(test.properties);
-    test_controller.items.add(test_item);
-  }
-  log_channel.appendLine(`found ${test_controller.items.size} tests`);
+  log_channel.appendLine("Discovering tests... ");
+  run_ctest_show_only(log_channel)
+    .then(ctest_output_string => {
+      const ctest_output = JSON.parse(ctest_output_string) as CTestConfiguration;
+      for (const test of ctest_output.tests) {
+        let test_item = test_controller.createTestItem(test.name, test.name);
+        test_item.tags = get_test_tags(test.properties);
+        test_item.description = get_test_description(test.properties);
+        test_controller.items.add(test_item);
+      }
+      log_channel.appendLine(`found ${test_controller.items.size} tests`);
+    })
+    .catch(err => log_channel.appendLine(err.message));
 }
 
 
@@ -35,11 +65,10 @@ function run_ctest_show_only(log_channel: vscode.OutputChannel): Promise<string>
         }
       });
       process.on("error", err => {
-        log_channel.appendLine(err.message);
         reject(err);
       });
     } else {
-      log_channel.appendLine("Failed to run ctest");
+      reject({message: "Failed to run ctest"});
     }
   });
 }

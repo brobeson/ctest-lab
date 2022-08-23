@@ -3,6 +3,10 @@
   "displayName": "ctest-lab",
   "description": "CTest extension for Visual Studio Code",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brobeson/ctest-lab.git"
+  },
   "engines": {
     "vscode": "^1.70.0"
   },
