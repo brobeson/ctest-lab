@@ -1,13 +1,39 @@
 import * as vscode from "vscode";
 import { spawnSync } from "child_process";
 
+// https://cmake.org/cmake/help/latest/manual/ctest.1.html#show-as-json-object-model
+type CTestConfiguration = {
+  kind: "ctestInfo";
+  version: {
+    major: number;
+    minor: number;
+  };
+  backtraceGraph: {
+    commands: string[];
+    files: string[];
+    nodes: {
+      command?: number;
+      file?: number;
+      line?: number;
+      parent?: number;
+    }[];
+  };
+  tests: {
+    name: string;
+    config?: string;
+    command: string[];
+    backtrace: number;
+    properties: { name: string; value: any }[];
+  }[];
+};
+
 export function discover_tests(test_controller: vscode.TestController, log_channel: vscode.OutputChannel) {
   log_channel.append("Discovering tests... ");
   const ctest_output = run_ctest_show_only(log_channel);
   if (ctest_output === null) {
     return;
   }
-  const json_data = JSON.parse(ctest_output);
+  const json_data = JSON.parse(ctest_output) as CTestConfiguration;
   let tests: vscode.TestItem[] = [];
   for (const test of json_data.tests) {
     let test_item = test_controller.createTestItem(test.name, test.name);
