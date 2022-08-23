@@ -7,6 +7,7 @@ export async function discover_tests(test_controller: vscode.TestController, log
   for (const test of ctest_output.tests) {
     let test_item = test_controller.createTestItem(test.name, test.name);
     test_item.tags = get_test_tags(test.properties);
+    test_item.description = get_test_description(test.properties);
     test_controller.items.add(test_item);
   }
   log_channel.appendLine(`found ${test_controller.items.size} tests`);
@@ -69,12 +70,31 @@ function replace_code_variables(path: string): string {
 
 function get_test_tags(test_properties: any): vscode.TestTag[] {
   let tags: vscode.TestTag[] = [];
-  for (const test_property of test_properties) {
-    if (test_property.name === "LABELS") {
-      for (const label of test_property.value) {
-        tags.push(new vscode.TestTag(label));
-      }
+  const labels = get_property_value(test_properties, "LABELS");
+  if (labels) {
+    for (const label of labels) {
+      tags.push(new vscode.TestTag(label));
     }
   }
   return tags;
+}
+
+
+function get_test_description(test_properties: Object): string {
+  let description: string = "";
+  const disabled = get_property_value(test_properties, "DISABLED");
+  if (disabled) {
+    description = "disabled";
+  }
+  return description;
+}
+
+
+function get_property_value(properties: any, property_name: string) {
+  for (const test_property of properties) {
+    if (test_property.name === property_name) {
+      return test_property.value;
+    }
+  }
+  return undefined;
 }
