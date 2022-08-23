@@ -4,12 +4,14 @@ import { spawn } from "child_process";
 export async function discover_tests(test_controller: vscode.TestController, log_channel: vscode.OutputChannel) {
   log_channel.append("Discovering tests... ");
   const ctest_output = JSON.parse(await run_ctest_show_only(log_channel));
+  let tests: vscode.TestItem[] = [];
   for (const test of ctest_output.tests) {
     let test_item = test_controller.createTestItem(test.name, test.name);
     test_item.tags = get_test_tags(test.properties);
     test_item.description = get_test_description(test.properties);
-    test_controller.items.add(test_item);
+    tests.push(test_item);
   }
+  test_controller.items.replace(tests);
   log_channel.appendLine(`found ${test_controller.items.size} tests`);
 }
 
@@ -84,7 +86,7 @@ function get_test_description(test_properties: Object): string {
   let description: string = "";
   const disabled = get_property_value(test_properties, "DISABLED");
   if (disabled) {
-    description = "disabled";
+    description = "(disabled)";
   }
   return description;
 }
