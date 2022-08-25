@@ -87,6 +87,10 @@ function get_test_tags(test_properties: any): vscode.TestTag[] {
       tags.push(new vscode.TestTag(label));
     }
   }
+  const disabled = get_property_value(test_properties, "DISABLED");
+  if (disabled) {
+    tags.push(new vscode.TestTag("disabled"));
+  }
   return tags;
 }
 
