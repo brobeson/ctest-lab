@@ -1,11 +1,15 @@
 import * as vscode from "vscode";
-import { spawn } from "child_process";
+import { spawnSync } from "child_process";
 
-export async function discover_tests(test_controller: vscode.TestController, log_channel: vscode.OutputChannel) {
+export function discover_tests(test_controller: vscode.TestController, log_channel: vscode.OutputChannel) {
   log_channel.append("Discovering tests... ");
-  const ctest_output = JSON.parse(await run_ctest_show_only(log_channel));
+  const ctest_output = run_ctest_show_only(log_channel);
+  if (ctest_output === null) {
+    return;
+  }
+  const json_data = JSON.parse(ctest_output);
   let tests: vscode.TestItem[] = [];
-  for (const test of ctest_output.tests) {
+  for (const test of json_data.tests) {
     let test_item = test_controller.createTestItem(test.name, test.name);
     test_item.tags = get_test_tags(test.properties);
     test_item.description = get_test_description(test.properties);
@@ -16,39 +20,18 @@ export async function discover_tests(test_controller: vscode.TestController, log
 }
 
 
-function run_ctest_show_only(log_channel: vscode.OutputChannel): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const process = spawn("ctest", ["--show-only=json-v1"], { cwd: get_build_directory() });
-    let stdout = "";
-    let stderr = "";
-    if (process.pid) {
-      process.stdout.on("data", data => {
-        stdout += data;
-      });
-      process.stdout.on("end", () => {
-        resolve(stdout);
-      });
-      process.stderr.on("data", data => {
-        stderr += data;
-      });
-      process.stderr.on("end", () => {
-        if (stderr.length > 0) {
-          log_channel.appendLine(stderr);
-        }
-      });
-      process.on("error", err => {
-        log_channel.appendLine(err.message);
-        reject(err);
-      });
-    } else {
-      log_channel.appendLine("Failed to run ctest");
-    }
-  });
+function run_ctest_show_only(log_channel: vscode.OutputChannel) {
+  const result = spawnSync("ctest", ["--show-only=json-v1"], { cwd: get_build_directory() });
+  if (result.status !== 0) {
+    log_channel.appendLine("Failed to run 'ctest --show-only=json-v1':");
+    log_channel.appendLine(result.stderr.toString());
+    return null;
+  }
+  return result.stdout.toString();
 }
 
 
 function get_build_directory(): string {
-  // return "/home/brobeson/repositories/track-fusion/build";
   let build_directory: string = "";
   let config = vscode.workspace.getConfiguration("cmake");
   if (config.has("buildDirectory")) {
