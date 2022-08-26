@@ -15,10 +15,13 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	const controller = vscode.tests.createTestController("ctest-lab-tests", "CTest");
+	controller.refreshHandler = (token: vscode.CancellationToken) => ctest.refresh_tests(controller, log_channel, token);
+
 	context.subscriptions.push(controller);
 	async function discover_tests() {
-		ctest.discover_tests(controller, log_channel);
+		ctest.refresh_tests(controller, log_channel);
 	}
+	discover_tests();
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand('ctest.discoverTests', discover_tests));
