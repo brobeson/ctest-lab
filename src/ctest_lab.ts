@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { spawnSync } from "child_process";
 import { spawn } from "child_process";
 import type { CTestConfiguration } from "./types/CTestConfiguration";
 
