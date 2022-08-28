@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
-import { spawnSync } from "child_process";
+import { spawn } from "child_process";
 
 // https://cmake.org/cmake/help/latest/manual/ctest.1.html#show-as-json-object-model
-type CTestConfiguration = {
+export type CTestConfiguration = {
   kind: "ctestInfo";
   version: {
     major: number;
@@ -27,33 +27,90 @@ type CTestConfiguration = {
   }[];
 };
 
-export function discover_tests(test_controller: vscode.TestController, log_channel: vscode.OutputChannel) {
-  log_channel.append("Discovering tests... ");
-  const ctest_output = run_ctest_show_only(log_channel);
-  if (ctest_output === null) {
-    return;
-  }
-  const json_data = JSON.parse(ctest_output) as CTestConfiguration;
-  let tests: vscode.TestItem[] = [];
-  for (const test of json_data.tests) {
-    let test_item = test_controller.createTestItem(test.name, test.name);
-    test_item.tags = get_test_tags(test.properties);
-    test_item.description = get_test_description(test.properties);
-    tests.push(test_item);
-  }
-  test_controller.items.replace(tests);
-  log_channel.appendLine(`found ${test_controller.items.size} tests`);
+
+/**
+ * Discover tests and populate the test controller with test items.
+ * When called multiple times, it will replace all previous test items
+ * with the newly discovered tests.
+ * Can be used as the refreshHandler of a TestController.
+ * @param test_controller VS Code test controller
+ * @param log VS Code out put channel
+ * @param token VS Code cancellation token
+ * 
+ * @returns A promise which resolves when the the tests have been refreshed or has failed to do so.
+ */
+export async function refresh_tests(
+  test_controller: vscode.TestController,
+  log: vscode.OutputChannel,
+  token?: vscode.CancellationToken
+): Promise<void> {
+  return new Promise<void>((resolve) => {
+    log.append("Discovering tests... ");
+    const controller = new AbortController();
+    const { signal } = controller;
+    token?.onCancellationRequested(() => controller.abort());
+    run_ctest_show_only_json(signal)
+      .then((value) => {
+        if (value.stderr.length > 0) {
+          log.appendLine(value.stderr);
+        }
+        if (value.code !== 0) {
+          log.appendLine(`ctest failed with code ${value.code}`);
+          resolve();
+          return;
+        }
+        return JSON.parse(value.stdout) as CTestConfiguration;
+      })
+      .then((config) => {
+        if (config === undefined) {
+          return;
+        }
+
+        let tests: vscode.TestItem[] = [];
+        for (const test of config.tests) {
+          let test_item = test_controller.createTestItem(test.name, test.name);
+          test_item.tags = get_test_tags(test.properties);
+          test_item.description = get_test_description(test.properties);
+          tests.push(test_item);
+        }
+        test_controller.items.replace(tests);
+        log.appendLine(`found ${test_controller.items.size} tests`);
+        resolve();
+      })
+      .catch((err) => {
+        log.appendLine(`Error: ${err.message}`);
+        resolve();
+      });
+  });
 }
 
 
-function run_ctest_show_only(log_channel: vscode.OutputChannel) {
-  const result = spawnSync("ctest", ["--show-only=json-v1"], { cwd: get_build_directory() });
-  if (result.status !== 0) {
-    log_channel.appendLine("Failed to run 'ctest --show-only=json-v1':");
-    log_channel.appendLine(result.stderr.toString());
-    return null;
-  }
-  return result.stdout.toString();
+function run_ctest_show_only_json(
+  signal: AbortSignal
+): Promise<{ stdout: string; stderr: string; code: number | null }> {
+  return new Promise((resolve, reject) => {
+    const process = spawn("ctest", ["--show-only=json-v1"], {
+      signal,
+      cwd: get_build_directory(),
+    });
+    let stdout = "";
+    let stderr = "";
+    if (process.pid) {
+      process.stdout.on("data", (data) => {
+        data = data.toString();
+        stdout += data;
+      });
+      process.stderr.on("data", (data) => {
+        stderr += data.toString();
+      });
+      process.on("close", (code) => {
+        resolve({ stdout, stderr, code });
+      });
+      process.on("error", (err) => reject(err));
+    } else {
+      reject({ message: "Failed to run ctest" });
+    }
+  });
 }
 
 
