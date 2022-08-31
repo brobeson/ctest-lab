@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { spawn } from "child_process";
 
 // https://cmake.org/cmake/help/latest/manual/ctest.1.html#show-as-json-object-model
-export type CTestConfiguration = {
+type CTestConfiguration = {
   kind: "ctestInfo";
   version: {
     major: number;
