@@ -10,11 +10,19 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(log_channel);
   log_channel.appendLine("CTest Lab is available.");
 
-  if (vscode.workspace.getConfiguration("cmake").get("buildDirectory") === undefined) {
-    vscode.window.showWarningMessage("Setting 'cmake.buildDirectory' not found. Falling back to 'ctest-lab.buildDirectory'.");
+  if (
+    vscode.workspace.getConfiguration("cmake").get("buildDirectory") ===
+    undefined
+  ) {
+    vscode.window.showWarningMessage(
+      "Setting 'cmake.buildDirectory' not found. Falling back to 'ctest-lab.buildDirectory'."
+    );
   }
 
-  const controller = vscode.tests.createTestController("ctest-lab-tests", "CTest");
+  const controller = vscode.tests.createTestController(
+    "ctest-lab-tests",
+    "CTest"
+  );
   controller.refreshHandler = (token: vscode.CancellationToken) =>
     ctest.refresh_tests(controller, log_channel, token);
 

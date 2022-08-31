@@ -27,7 +27,6 @@ export type CTestConfiguration = {
   }[];
 };
 
-
 /**
  * Discover tests and populate the test controller with test items.
  * When called multiple times, it will replace all previous test items
@@ -36,7 +35,7 @@ export type CTestConfiguration = {
  * @param test_controller VS Code test controller
  * @param log VS Code out put channel
  * @param token VS Code cancellation token
- * 
+ *
  * @returns A promise which resolves when the the tests have been refreshed or has failed to do so.
  */
 export async function refresh_tests(
@@ -84,7 +83,6 @@ export async function refresh_tests(
   });
 }
 
-
 function run_ctest_show_only_json(
   signal: AbortSignal
 ): Promise<{ stdout: string; stderr: string; code: number | null }> {
@@ -113,7 +111,6 @@ function run_ctest_show_only_json(
   });
 }
 
-
 function get_build_directory(): string {
   let build_directory: string = "";
   let config = vscode.workspace.getConfiguration("cmake");
@@ -126,15 +123,14 @@ function get_build_directory(): string {
   return replace_code_variables(build_directory);
 }
 
-
 function replace_code_variables(path: string): string {
   if (vscode.workspace.workspaceFolders) {
-    const workspaceFolder: string = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const workspaceFolder: string =
+      vscode.workspace.workspaceFolders[0].uri.fsPath;
     return path.replace("${workspaceFolder}", workspaceFolder);
   }
   return path;
 }
-
 
 function get_test_tags(test_properties: any): vscode.TestTag[] {
   let tags: vscode.TestTag[] = [];
@@ -151,7 +147,6 @@ function get_test_tags(test_properties: any): vscode.TestTag[] {
   return tags;
 }
 
-
 function get_test_description(test_properties: Object): string {
   let description: string = "";
   const disabled = get_property_value(test_properties, "DISABLED");
@@ -160,7 +155,6 @@ function get_test_description(test_properties: Object): string {
   }
   return description;
 }
-
 
 function get_property_value(properties: any, property_name: string) {
   for (const test_property of properties) {
