@@ -66,8 +66,14 @@ export async function refresh_tests(
         }
 
         let tests: vscode.TestItem[] = [];
+        let id = 0;
         for (const test of config.tests) {
-          let test_item = test_controller.createTestItem(test.name, test.name);
+          // if two tests have the same name, their ids will be the same. Added
+          // a serial id to differentiate colliding names
+          let test_item = test_controller.createTestItem(
+            `${id++}-${test.name}`,
+            test.name
+          );
           test_item.tags = get_test_tags(test.properties);
           test_item.description = get_test_description(test.properties);
           tests.push(test_item);
