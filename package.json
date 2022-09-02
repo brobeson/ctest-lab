@@ -1,18 +1,44 @@
 {
   "name": "ctest-lab",
-  "displayName": "ctest-lab",
-  "description": "CTest extension for Visual Studio Code",
+  "displayName": "CTest Lab",
+  "description": "Discover, filter, and run tests registered with CTest.",
   "version": "0.0.1",
+  "publisher": "brobeson",
+  "author": {
+    "name": "brobeson",
+    "url": "https://brobeson.github.io"
+  },
+  "contributors": [
+    "PhilipNelson5"
+  ],
+  "homepage": "https://brobeson.github.io/ctest-lab",
+  "icon": "images/logo.png",
+  "bugs": {
+    "url": "https://github.com/brobeson/ctest-lab/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brobeson/ctest-lab.git"
+  },
   "engines": {
     "vscode": "^1.70.0"
   },
+  "license": "MIT",
   "categories": [
-    "Other"
+    "Testing"
   ],
+  "keywords": [
+    "ctest",
+    "cmake"
+  ],
+  "preview": true,
   "activationEvents": [
     "onCommand:ctest-lab.helloWorld"
   ],
   "main": "./out/extension.js",
+  "extensionKind": [
+    "workspace"
+  ],
   "contributes": {
     "commands": [
       {
@@ -22,12 +48,13 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "./scripts/prepublish.sh",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "clean": "rm -r out/*"
   },
   "devDependencies": {
     "@types/glob": "^7.2.0",
