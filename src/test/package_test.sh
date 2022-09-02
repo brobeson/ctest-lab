@@ -9,6 +9,7 @@ expected_files="[Content_Types].xml
 extension/CHANGELOG.md
 extension/images/logo.png
 extension/LICENSE.txt
+extension/out/ctest_lab.js
 extension/out/extension.js
 extension/package.json
 extension/README.md
