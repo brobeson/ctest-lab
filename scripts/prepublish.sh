@@ -8,7 +8,7 @@ set -eu
 #
 # This is tricky. Due to quirks in bash regex matching, the regex must be in a
 # variable, and I can't use quotes in the test.
-inkscape_version=$(inkscape --version)
+inkscape_version=$(inkscape --without-gui --version)
 inkscape_0_regex="^Inkscape 0"
 if [[ ${inkscape_version} =~ ${inkscape_0_regex} ]]
 then
