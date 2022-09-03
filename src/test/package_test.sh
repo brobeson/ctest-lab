@@ -10,6 +10,7 @@ extension/CHANGELOG.md
 extension/images/logo.png
 extension/LICENSE.txt
 extension/out/extension.js
+extension/out/test_discovery.js
 extension/package.json
 extension/README.md
 extension.vsixmanifest"

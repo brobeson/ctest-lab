@@ -1,27 +1,38 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
+import * as ctest from "./test_discovery";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log('Congratulations, your extension "ctest-lab" is now active!');
+  let log_channel = vscode.window.createOutputChannel("CTest");
+  context.subscriptions.push(log_channel);
+  log_channel.appendLine("CTest Lab is available.");
 
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with registerCommand
-  // The commandId parameter must match the command field in package.json
-  let disposable = vscode.commands.registerCommand(
-    "ctest-lab.helloWorld",
-    () => {
-      // The code you place here will be executed every time your command is executed
-      // Display a message box to the user
-      vscode.window.showInformationMessage("Hello World from ctest-lab!");
-    }
+  if (
+    vscode.workspace.getConfiguration("cmake").get("buildDirectory") ===
+    undefined
+  ) {
+    vscode.window.showWarningMessage(
+      "Setting 'cmake.buildDirectory' not found. Falling back to 'ctest-lab.buildDirectory'."
+    );
+  }
+
+  const controller = vscode.tests.createTestController(
+    "ctest-lab-tests",
+    "CTest"
   );
+  controller.refreshHandler = (token: vscode.CancellationToken) =>
+    ctest.refresh_tests(controller, log_channel, token);
 
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(controller);
+  const discover_tests = () => ctest.refresh_tests(controller, log_channel);
+  discover_tests();
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("ctest.discoverTests", discover_tests)
+  );
 }
 
 // this method is called when your extension is deactivated

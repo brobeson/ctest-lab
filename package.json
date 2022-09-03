@@ -33,7 +33,7 @@
   ],
   "preview": true,
   "activationEvents": [
-    "onCommand:ctest-lab.helloWorld"
+    "workspaceContains:CMakeLists.txt"
   ],
   "main": "./out/extension.js",
   "extensionKind": [
@@ -42,10 +42,20 @@
   "contributes": {
     "commands": [
       {
-        "command": "ctest-lab.helloWorld",
-        "title": "Hello World"
+        "command": "ctest.discoverTests",
+        "title": "Discover Tests",
+        "category": "CTest"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "ctest-lab",
+      "properties": {
+        "ctest-lab.buildDirectory": {
+          "type": "string",
+          "description": ""
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "./scripts/prepublish.sh",
