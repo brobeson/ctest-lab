@@ -53,16 +53,16 @@ export async function run_tests(
   token?.onCancellationRequested(() => abort_controller.abort());
 
   const run = test_controller.createTestRun(request);
-  const queue: vscode.TestItem[] = [];
+  const test_queue: vscode.TestItem[] = [];
 
   if (request.include) {
-    request.include.forEach((test) => queue.push(test));
+    request.include.forEach((test) => test_queue.push(test));
   } else {
-    test_controller.items.forEach((test) => queue.push(test));
+    test_controller.items.forEach((test) => test_queue.push(test));
   }
 
-  while (queue.length > 0 && !token.isCancellationRequested) {
-    const test = queue.pop()!;
+  while (test_queue.length > 0 && !token.isCancellationRequested) {
+    const test = test_queue.pop()!;
 
     // Skip tests the user asked to exclude
     if (request.exclude?.includes(test)) {
@@ -86,7 +86,7 @@ export async function run_tests(
       run.failed(test, new vscode.TestMessage(e.message), Date.now() - start);
     }
 
-    test.children.forEach((test) => queue.push(test));
+    test.children.forEach((test) => test_queue.push(test));
   }
 
   run.end();

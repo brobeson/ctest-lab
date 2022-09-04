@@ -27,11 +27,12 @@ export function activate(context: vscode.ExtensionContext) {
   controller.refreshHandler = (token: vscode.CancellationToken) =>
     ctest.refresh_tests(controller, log_channel, token);
 
+  const run_debug = true;
   const runProfile = controller.createRunProfile(
     "Run",
     vscode.TestRunProfileKind.Run,
     (request, token) => {
-      run_tests(controller, log_channel, false, request, token);
+      run_tests(controller, log_channel, !run_debug, request, token);
     }
   );
 
@@ -40,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
   //   "Debug",
   //   vscode.TestRunProfileKind.Debug,
   //   (request, token) => {
-  //     ctest.run_tests(controller, log_channel, true, request, token);
+  //     ctest.run_tests(controller, log_channel, run_debug, request, token);
   //   }
   // );
 
