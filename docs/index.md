@@ -49,17 +49,17 @@ tests does not look correct, try configuring and building your project, first.
 
 ## The Testing View
 
-CTest Lab provides ways for you to interact with your tests in the _Testing_
-View.
+CTest Lab provides ways for you to interact with your tests in the Testing View.
 
 ### Test Tags
 
 VS Code's test API provides support for test tags. Users can filter tests by tag
-in the _Testing_ view. CTest Lab checks your tests
+in the Testing view. CTest Lab checks your tests'
 [`LABELS` properties](https://cmake.org/cmake/help/latest/prop_test/LABELS.html)
 and adds all your labels as tags. In this example, if you filter
-`@ctest-lab-tests:unit` in the VS Code Testing view, you will see foo_test and
-bar_test. If you filter `@ctest-lab-tests:e2e`, you only see end_to_end_test.
+`@ctest-lab-tests:unit` in the VS Code Testing view, you will see `foo_test` and
+`bar_test`. If you filter `@ctest-lab-tests:e2e`, you will only see
+`end_to_end_test`.
 
 ```cmake
 add_executable(foo_test foo_test.cpp)
@@ -83,8 +83,8 @@ allows you to quickly see which tests are disabled.
 
 ## Road Map
 
-| Done? | Version                                                          | Description                                   |
-| :---- | :--------------------------------------------------------------- | :-------------------------------------------- |
-|       | [Version 0.1](https://github.com/brobeson/ctest-lab/milestone/1) | Implement test discovery                      |
+| Done? |                             Version                              | Description                                   |
+| :---: | :--------------------------------------------------------------: | :-------------------------------------------- |
+|  ✅   | [Version 0.1](https://github.com/brobeson/ctest-lab/milestone/1) | Implement test discovery                      |
 |       | [Version 0.2](https://github.com/brobeson/ctest-lab/milestone/2) | Implement test execution                      |
 |       | [Version 1.0](https://github.com/brobeson/ctest-lab/milestone/2) | Finalize functionality for production release |
