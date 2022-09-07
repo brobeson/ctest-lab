@@ -1,8 +1,10 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
+import { get_build_directory } from "./extension_helpers";
+import { test_details } from "./test_details";
 
 // https://cmake.org/cmake/help/latest/manual/ctest.1.html#show-as-json-object-model
-export type CTestConfiguration = {
+type CTestConfiguration = {
   kind: "ctestInfo";
   version: {
     major: number;
@@ -77,6 +79,8 @@ export async function refresh_tests(
           test_item.tags = get_test_tags(test.properties);
           test_item.description = get_test_description(test.properties);
           tests.push(test_item);
+
+          test_details.set(test_item, { command: test.command });
         }
         test_controller.items.replace(tests);
         log.appendLine(`found ${test_controller.items.size} tests`);
@@ -100,42 +104,14 @@ function run_ctest_show_only_json(
     let stdout = "";
     let stderr = "";
     if (process.pid) {
-      process.stdout.on("data", (data) => {
-        data = data.toString();
-        stdout += data;
-      });
-      process.stderr.on("data", (data) => {
-        stderr += data.toString();
-      });
-      process.on("close", (code) => {
-        resolve({ stdout, stderr, code });
-      });
+      process.stdout.on("data", (data) => (stdout += data.toString()));
+      process.stderr.on("data", (data) => (stderr += data.toString()));
+      process.on("close", (code) => resolve({ stdout, stderr, code }));
       process.on("error", (err) => reject(err));
     } else {
       reject({ message: "Failed to run ctest" });
     }
   });
-}
-
-function get_build_directory(): string {
-  let build_directory: string = "";
-  let config = vscode.workspace.getConfiguration("cmake");
-  if (config.has("buildDirectory")) {
-    build_directory = config.get("buildDirectory") as string;
-  } else {
-    config = vscode.workspace.getConfiguration("ctest-lab");
-    build_directory = config.get("buildDirectory") as string;
-  }
-  return replace_code_variables(build_directory);
-}
-
-function replace_code_variables(path: string): string {
-  if (vscode.workspace.workspaceFolders) {
-    const workspaceFolder: string =
-      vscode.workspace.workspaceFolders[0].uri.fsPath;
-    return path.replace("${workspaceFolder}", workspaceFolder);
-  }
-  return path;
 }
 
 function get_test_tags(test_properties: any): vscode.TestTag[] {

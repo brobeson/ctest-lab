@@ -4,7 +4,12 @@ This file documents all notable changes to the CTest Lab extension.
 
 ## [Unreleased]
 
-## [0.1.0] - 2022-09-02
+### Added
+
+- Ability to run discovered tests:
+  [#13](https://github.com/brobeson/ctest-lab/issues/13)
+
+## [0.1.0] — 2022-09-02
 
 ### Added
 

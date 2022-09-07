@@ -9,6 +9,7 @@ CTest.
 
 - Discover tests registered with CTest.
 - Filter tests by CTest `LABELS` property.
+- Run individual tests.
 
 ## Known Issues
 
@@ -22,3 +23,12 @@ CTest.
   documentation for this, yet.
 - CTest Lab includes tests that are not built in the discovery results. See
   [#12](https://github.com/brobeson/ctest-lab/issues/12) for details.
+- CTest Lab does not run `ctest`; it runs the actual test commands. This means
+  that CTest Lab does not support CTest features, yet. For example, features are
+  not run, test properties such as `ENVIRONMENT` and `REQUIRED_FILES` are not
+  respected. Watch [#15](https://github.com/brobeson/ctest-lab/issues/15) to see
+  when I correct this.
+
+## User Manual
+
+Read the user manual at <https://brobeson.github.io/ctest-lab>.

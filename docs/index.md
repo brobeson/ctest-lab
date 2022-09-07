@@ -5,8 +5,7 @@
 <!-- prettier-ignore -->
 > ❗ **WARNING**
 >
-> This extension is still a preview. You can discover tests and filter tests in
-> VS Code. You cannot run tests, yet. See the road map below.
+> This extension is still a preview lacking some major functionality.
 
 ## Why CTest Lab
 
@@ -46,6 +45,23 @@ to discover some tests until you build them. For example, if you use
 [Catch2's catch_discover_tests()](https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md#automatic-test-registration)
 command, the tests are not actually added until you build them. If the list of
 tests does not look correct, try configuring and building your project, first.
+
+## Running Tests
+
+After CTest Lab discovers your tests, you can run them in the Testing View. You
+can run all your tests with one command, or run individual tests. Use the play
+buttons in the Testing View to run tests. If a test fails, click the _Show
+Output_ button in the Testing View. This shows the test output in an integrated
+terminal.
+
+<!-- prettier-ignore -->
+> ❗ **WARNING**
+>
+> CTest Lab does not invoke `ctest` to run your tests; it runs the actual
+> executables. Therefore, some features of CTest are not used. For example, if a
+> test has the `REQUIRED_FILES` property defined, the test will run even if the
+> files are not present. This is a temporary limitation; I plan to fix it in the
+> next minor release.
 
 ## The Testing View
 
@@ -87,4 +103,5 @@ allows you to quickly see which tests are disabled.
 | :---: | :--------------------------------------------------------------: | :-------------------------------------------- |
 |  ✅   | [Version 0.1](https://github.com/brobeson/ctest-lab/milestone/1) | Implement test discovery                      |
 |       | [Version 0.2](https://github.com/brobeson/ctest-lab/milestone/2) | Implement test execution                      |
+|       | [Version 0.3](https://github.com/brobeson/ctest-lab/milestone/2) | Use `ctest` to execute tests                  |
 |       | [Version 1.0](https://github.com/brobeson/ctest-lab/milestone/2) | Finalize functionality for production release |

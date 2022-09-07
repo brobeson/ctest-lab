@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import * as ctest from "./test_discovery";
+import { run_tests } from "./test_runner";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -25,6 +26,24 @@ export function activate(context: vscode.ExtensionContext) {
   );
   controller.refreshHandler = (token: vscode.CancellationToken) =>
     ctest.refresh_tests(controller, log_channel, token);
+
+  const run_debug = true;
+  const runProfile = controller.createRunProfile(
+    "Run",
+    vscode.TestRunProfileKind.Run,
+    (request, token) => {
+      run_tests(controller, log_channel, !run_debug, request, token);
+    }
+  );
+
+  // TODO figure out debug mode
+  // const debugProfile = controller.createRunProfile(
+  //   "Debug",
+  //   vscode.TestRunProfileKind.Debug,
+  //   (request, token) => {
+  //     ctest.run_tests(controller, log_channel, run_debug, request, token);
+  //   }
+  // );
 
   context.subscriptions.push(controller);
   const discover_tests = () => ctest.refresh_tests(controller, log_channel);
