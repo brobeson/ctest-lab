@@ -9,16 +9,17 @@ async function run_test(
   log: vscode.OutputChannel
 ): Promise<{ stdout: string; stderr: string; code: number | null }> {
   return new Promise((resolve, reject) => {
-    const test_detail = test_details.get(test)!;
-    const command = test_detail.command[0];
-    const args = test_detail.command.slice(1);
+    const command = "ctest";
+    const args = [
+      "--tests-regex",
+      `^${test.label.replaceAll("(", "\\(").replaceAll(")", "\\)")}$`,
+    ];
     const process = spawn(command, args, {
       signal,
       cwd: get_build_directory(),
     });
 
-    let stdout =
-      command + " " + args.map((val) => JSON.stringify(val)).join(" ") + "\n";
+    let stdout = command + " " + args[0] + ` "${args[1]}"` + "\n";
     let stderr = "";
     if (process.pid) {
       process.stdout.on("data", (data) => (stdout += data.toString()));
