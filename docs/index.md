@@ -35,7 +35,7 @@ Before you can run tests, you must tell CTest Lab to look for the tests. There
 are three ways to discover tests:
 
 1. CTest Lab attempts to discover tests when it activates.
-1. You can run the `CTest: Discover Tests` command from the command palette.
+1. You can run the `Test: Refresh Tests` command from the command palette.
 1. You can click the `Refresh` button in the Testing view.
 
 Test discovery requires that you have configured your project. CTest Lab runs
@@ -44,7 +44,8 @@ get the list of available tests. This also means that CTest Lab may not be able
 to discover some tests until you build them. For example, if you use
 [Catch2's catch_discover_tests()](https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md#automatic-test-registration)
 command, the tests are not actually added until you build them. If the list of
-tests does not look correct, try configuring and building your project, first.
+tests does not look correct, try configuring and building your project, then
+refresh the tests.
 
 ## Running Tests
 

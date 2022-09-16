@@ -40,13 +40,6 @@
     "workspace"
   ],
   "contributes": {
-    "commands": [
-      {
-        "command": "ctest.discoverTests",
-        "title": "Discover Tests",
-        "category": "CTest"
-      }
-    ],
     "configuration": {
       "title": "ctest-lab",
       "properties": {

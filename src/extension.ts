@@ -1,5 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+import { log } from "console";
 import * as vscode from "vscode";
 import * as ctest from "./test_discovery";
 import { run_tests } from "./test_runner";
@@ -24,6 +25,8 @@ export function activate(context: vscode.ExtensionContext) {
     "ctest-lab-tests",
     "CTest"
   );
+  context.subscriptions.push(controller);
+
   controller.refreshHandler = (token: vscode.CancellationToken) =>
     ctest.refresh_tests(controller, log_channel, token);
 
@@ -45,13 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
   //   }
   // );
 
-  context.subscriptions.push(controller);
-  const discover_tests = () => ctest.refresh_tests(controller, log_channel);
-  discover_tests();
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("ctest.discoverTests", discover_tests)
-  );
+  ctest.refresh_tests(controller, log_channel);
 }
 
 // this method is called when your extension is deactivated

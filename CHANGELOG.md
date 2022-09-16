@@ -6,6 +6,12 @@ This file documents all notable changes to the CTest Lab extension.
 
 ## [Unreleased]
 
+### Removed
+
+- `CTest: Discover Tests` command:
+  [#18](https://github.com/brobeson/ctest-lab/issues/18)
+  - Use VS Code's `Test: Refresh Tests` command, instead.
+
 ## [0.2.0] — 2022-09-06
 
 ### Added
