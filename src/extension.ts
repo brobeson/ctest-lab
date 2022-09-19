@@ -1,17 +1,13 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import { log } from "console";
 import * as vscode from "vscode";
 import * as ctest from "./test_discovery";
 import { run_tests } from "./test_runner";
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   let log_channel = vscode.window.createOutputChannel("CTest");
   context.subscriptions.push(log_channel);
   log_channel.appendLine("CTest Lab is available.");
 
+  // TODO Probably delete these blocks. Do users really need to know this?
   if (
     vscode.workspace.getConfiguration("cmake").get("buildDirectory") ===
     undefined
@@ -30,26 +26,15 @@ export function activate(context: vscode.ExtensionContext) {
   controller.refreshHandler = (token: vscode.CancellationToken) =>
     ctest.refresh_tests(controller, log_channel, token);
 
-  const run_debug = true;
-  const runProfile = controller.createRunProfile(
+  controller.createRunProfile(
     "Run",
     vscode.TestRunProfileKind.Run,
     (request, token) => {
-      run_tests(controller, log_channel, !run_debug, request, token);
+      run_tests(controller, log_channel, request, token);
     }
   );
-
-  // TODO figure out debug mode
-  // const debugProfile = controller.createRunProfile(
-  //   "Debug",
-  //   vscode.TestRunProfileKind.Debug,
-  //   (request, token) => {
-  //     ctest.run_tests(controller, log_channel, run_debug, request, token);
-  //   }
-  // );
 
   ctest.refresh_tests(controller, log_channel);
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}

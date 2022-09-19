@@ -1,35 +1,6 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
 import { get_build_directory } from "./extension_helpers";
-import { test_details } from "./test_details";
-
-async function run_test(
-  test: vscode.TestItem,
-  signal: AbortSignal,
-  log: vscode.OutputChannel
-): Promise<{ stdout: string; stderr: string; code: number | null }> {
-  return new Promise((resolve, reject) => {
-    const test_detail = test_details.get(test)!;
-    const command = test_detail.command[0];
-    const args = test_detail.command.slice(1);
-    const process = spawn(command, args, {
-      signal,
-      cwd: get_build_directory(),
-    });
-
-    let stdout =
-      command + " " + args.map((val) => JSON.stringify(val)).join(" ") + "\n";
-    let stderr = "";
-    if (process.pid) {
-      process.stdout.on("data", (data) => (stdout += data.toString()));
-      process.stderr.on("data", (data) => (stderr += data.toString()));
-      process.on("close", (code) => resolve({ stdout, stderr, code }));
-      process.on("error", (err) => reject(err));
-    } else {
-      reject({ message: `Failed to run test ${command} ${args.join(" ")}` });
-    }
-  });
-}
 
 /**
  * The run handler executes each requested test and reports the output
@@ -37,57 +8,81 @@ async function run_test(
  * may be cancelled via the CancellationToken.
  * @param test_controller VS Code test controller
  * @param log VS Code extension output channel
- * @param shouldDebug Should tests run in debug
- * @param request VS Code test run request
- * @param token VS Code cancellation token
+ * @param run_request VS Code test run request
+ * @param cancel_token VS Code cancellation token
  */
 export async function run_tests(
   test_controller: vscode.TestController,
   log: vscode.OutputChannel,
-  shouldDebug: boolean,
-  request: vscode.TestRunRequest,
-  token: vscode.CancellationToken
+  run_request: vscode.TestRunRequest,
+  cancel_token: vscode.CancellationToken
 ) {
   const abort_controller = new AbortController();
   const { signal } = abort_controller;
-  token?.onCancellationRequested(() => abort_controller.abort());
+  cancel_token?.onCancellationRequested(() => abort_controller.abort());
 
-  const run = test_controller.createTestRun(request);
+  const run = test_controller.createTestRun(run_request);
   const test_queue: vscode.TestItem[] = [];
 
-  if (request.include) {
-    request.include.forEach((test) => test_queue.push(test));
+  if (run_request.include) {
+    run_request.include.forEach((test) => test_queue.push(test));
   } else {
     test_controller.items.forEach((test) => test_queue.push(test));
   }
 
-  while (test_queue.length > 0 && !token.isCancellationRequested) {
-    const test = test_queue.pop()!;
-
-    // Skip tests the user asked to exclude
-    if (request.exclude?.includes(test)) {
-      continue;
+  test_queue.forEach((test) => run.started(test));
+  const start = Date.now();
+  try {
+    let result = await run_all_tests(signal, log);
+    const elapsed = Date.now() - start;
+    if (result.code !== null && result.code === 0) {
+      test_queue.forEach((test) => run.passed(test, elapsed));
+    } else {
+      test_queue.forEach((test) =>
+        run.failed(test, new vscode.TestMessage(""), elapsed)
+      );
     }
-
-    const start = Date.now();
-    try {
-      const { stdout, stderr, code } = await run_test(test, signal, log);
-      // test output is in a terminal so lines must be wrapped
-      // using CRLF (\r\n), not just LF (\n)
-      run.appendOutput(stdout.replaceAll("\r", "").replaceAll("\n", "\r\n"));
-
-      if (code === 0) {
-        run.passed(test, Date.now() - start);
-      } else {
-        const message = new vscode.TestMessage(stderr);
-        run.errored(test, message, Date.now() - start);
-      }
-    } catch (e: any) {
-      run.failed(test, new vscode.TestMessage(e.message), Date.now() - start);
-    }
-
-    test.children.forEach((test) => test_queue.push(test));
+    // VS Code displays the test output in a terminal so we need to wrap lines
+    // using CRLF (\r\n), not just LF (\n)
+    run.appendOutput(
+      result.output.replaceAll("\r", "").replaceAll("\n", "\r\n")
+    );
+    log.show(true); // true -> output channel does not take focus
+  } catch (error: any) {
+    vscode.window.showErrorMessage(error.message);
   }
-
   run.end();
+}
+
+const test_results_file = "test_results.xml";
+
+async function run_all_tests(
+  signal: AbortSignal,
+  log: vscode.OutputChannel
+): Promise<{ output: string; code: number | null }> {
+  return new Promise((resolve, reject) => {
+    const command = "ctest";
+    const args = ["--output-on-failure", "--output-junit", test_results_file];
+    log.appendLine(command + " " + args.join(" "));
+    const process = spawn(command, args, {
+      signal,
+      cwd: get_build_directory(),
+    });
+
+    let output = "";
+    if (process.pid) {
+      process.stdout.on("data", (data) => {
+        log.append(data.toString());
+        output += data.toString();
+      });
+      process.stderr.on("data", (data) => {
+        log.append(data.toString());
+        output += data.toString();
+      });
+      process.on("close", (code) => resolve({ output, code }));
+      process.on("error", (err) => reject(err));
+    } else {
+      reject({ message: `Failed to run test ${command} ${args.join(" ")}` });
+    }
+  });
 }

@@ -6,6 +6,11 @@ This file documents all notable changes to the CTest Lab extension.
 
 ## [Unreleased]
 
+### Added
+
+- Run tests via the `ctest` command:
+  [#15](https://github.com/brobeson/ctest-lab/issues/15)
+
 ### Removed
 
 - `CTest: Discover Tests` command:
