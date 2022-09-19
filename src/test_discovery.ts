@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
 import { get_build_directory } from "./extension_helpers";
-import { test_details } from "./test_details";
 
 // https://cmake.org/cmake/help/latest/manual/ctest.1.html#show-as-json-object-model
 type CTestConfiguration = {
@@ -79,8 +78,6 @@ export async function refresh_tests(
           test_item.tags = get_test_tags(test.properties);
           test_item.description = get_test_description(test.properties);
           tests.push(test_item);
-
-          test_details.set(test_item, { command: test.command });
         }
         test_controller.items.replace(tests);
         log.appendLine(`found ${test_controller.items.size} tests`);
