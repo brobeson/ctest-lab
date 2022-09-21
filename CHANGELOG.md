@@ -10,6 +10,8 @@ This file documents all notable changes to the CTest Lab extension.
 
 - Run tests via the `ctest` command:
   [#15](https://github.com/brobeson/ctest-lab/issues/15)
+- Parse test results from `ctest` command output:
+  [#17](https://github.com/brobeson/ctest-lab/issues/15)
 
 ### Removed
 

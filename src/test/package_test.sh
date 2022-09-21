@@ -12,6 +12,7 @@ extension/LICENSE.txt
 extension/out/extension_helpers.js
 extension/out/extension.js
 extension/out/test_discovery.js
+extension/out/test_results.js
 extension/out/test_runner.js
 extension/package.json
 extension/README.md

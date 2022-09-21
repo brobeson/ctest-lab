@@ -1,6 +1,9 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
 import { get_build_directory } from "./extension_helpers";
+import * as test_results from "./test_results";
+
+const test_results_file = "test_results.xml";
 
 /**
  * The run handler executes each requested test and reports the output
@@ -22,30 +25,24 @@ export async function run_tests(
   cancel_token?.onCancellationRequested(() => abort_controller.abort());
 
   const run = test_controller.createTestRun(run_request);
-  const test_queue: vscode.TestItem[] = [];
-
-  if (run_request.include) {
-    run_request.include.forEach((test) => test_queue.push(test));
-  } else {
-    test_controller.items.forEach((test) => test_queue.push(test));
-  }
-
+  const test_queue = get_test_list(run_request, test_controller);
   test_queue.forEach((test) => run.started(test));
-  const start = Date.now();
+
   try {
-    let result = await run_all_tests(signal, log);
-    const elapsed = Date.now() - start;
-    if (result.code !== null && result.code === 0) {
-      test_queue.forEach((test) => run.passed(test, elapsed));
-    } else {
-      test_queue.forEach((test) =>
-        run.failed(test, new vscode.TestMessage(""), elapsed)
-      );
+    const command_result = await run_all_tests(signal, log);
+    const result_data = await test_results.load_test_results(
+      `${get_build_directory()}/${test_results_file}`
+    );
+    for (const test_result of result_data.results) {
+      const test_item = find_test_item(test_queue, test_result.name);
+      if (test_item !== null) {
+        update_test(run, test_item, test_result);
+      }
     }
     // VS Code displays the test output in a terminal so we need to wrap lines
     // using CRLF (\r\n), not just LF (\n)
     run.appendOutput(
-      result.output.replaceAll("\r", "").replaceAll("\n", "\r\n")
+      command_result.output.replaceAll("\r", "").replaceAll("\n", "\r\n")
     );
     log.show(true); // true -> output channel does not take focus
   } catch (error: any) {
@@ -53,8 +50,6 @@ export async function run_tests(
   }
   run.end();
 }
-
-const test_results_file = "test_results.xml";
 
 async function run_all_tests(
   signal: AbortSignal,
@@ -85,4 +80,57 @@ async function run_all_tests(
       reject({ message: `Failed to run test ${command} ${args.join(" ")}` });
     }
   });
+}
+
+function find_test_item(test_queue: vscode.TestItem[], name: string) {
+  for (const test of test_queue) {
+    if (test.label === name) {
+      return test;
+    }
+  }
+  return null;
+}
+
+function update_test(
+  run: vscode.TestRun,
+  test: vscode.TestItem,
+  result: test_results.TestResult
+) {
+  switch (result.status) {
+    case test_results.ctest_status.run:
+      run.passed(test, result.time);
+      break;
+    case test_results.ctest_status.notrun:
+    // CTest categorizes "not run" tests as failed. These are tests that don't
+    // run if they should have, but failed some prerequisite. An example is if
+    // a required file is missing.
+    case test_results.ctest_status.fail:
+      run.failed(
+        test,
+        new vscode.TestMessage(result.output.join("\n")),
+        result.time
+      );
+      break;
+    case test_results.ctest_status.disabled:
+      run.skipped(test);
+      break;
+    default:
+      vscode.window.showWarningMessage(
+        `Unknown CTest status found in test results: ${result.status}`
+      );
+      break;
+  }
+}
+
+function get_test_list(
+  run_request: vscode.TestRunRequest,
+  controller: vscode.TestController
+) {
+  const test_queue: vscode.TestItem[] = [];
+  if (run_request.include) {
+    run_request.include.forEach((test) => test_queue.push(test));
+  } else {
+    controller.items.forEach((test) => test_queue.push(test));
+  }
+  return test_queue;
 }
