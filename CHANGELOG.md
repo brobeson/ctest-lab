@@ -12,6 +12,8 @@ This file documents all notable changes to the CTest Lab extension.
   [#15](https://github.com/brobeson/ctest-lab/issues/15)
 - Parse test results from `ctest` command output:
   [#17](https://github.com/brobeson/ctest-lab/issues/15)
+- Run individual tests from the test view:
+  [#21](https://github.com/brobeson/ctest-lab/issues/21)
 
 ### Removed
 

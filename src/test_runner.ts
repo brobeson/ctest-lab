@@ -29,7 +29,11 @@ export async function run_tests(
   test_queue.forEach((test) => run.started(test));
 
   try {
-    const command_result = await run_all_tests(signal, log);
+    const command_result = await runCtestCommand(
+      signal,
+      log,
+      test_queue.length === 1 ? test_queue[0].label : undefined
+    );
     const result_data = await test_results.load_test_results(
       `${get_build_directory()}/${test_results_file}`
     );
@@ -51,13 +55,17 @@ export async function run_tests(
   run.end();
 }
 
-async function run_all_tests(
+async function runCtestCommand(
   signal: AbortSignal,
-  log: vscode.OutputChannel
+  log: vscode.OutputChannel,
+  testName?: string
 ): Promise<{ output: string; code: number | null }> {
   return new Promise((resolve, reject) => {
     const command = "ctest";
     const args = ["--output-on-failure", "--output-junit", test_results_file];
+    if (testName) {
+      args.push("--tests-regex", testName);
+    }
     log.appendLine(command + " " + args.join(" "));
     const process = spawn(command, args, {
       signal,
