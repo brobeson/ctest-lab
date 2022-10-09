@@ -66,7 +66,7 @@ async function runCtestCommand(
     if (testName) {
       args.push("--tests-regex", testName);
     }
-    log.appendLine(command + " " + args.join(" "));
+    log.appendLine("\n\n" + command + " " + args.join(" "));
     const process = spawn(command, args, {
       signal,
       cwd: get_build_directory(),
