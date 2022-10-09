@@ -7,16 +7,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(log_channel);
   log_channel.appendLine("CTest Lab is available.");
 
-  // TODO Probably delete these blocks. Do users really need to know this?
-  if (
-    vscode.workspace.getConfiguration("cmake").get("buildDirectory") ===
-    undefined
-  ) {
-    vscode.window.showWarningMessage(
-      "Setting 'cmake.buildDirectory' not found. Falling back to 'ctest-lab.buildDirectory'."
-    );
-  }
-
   const controller = vscode.tests.createTestController(
     "ctest-lab-tests",
     "CTest"

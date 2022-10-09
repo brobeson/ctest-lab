@@ -20,6 +20,8 @@ This file documents all notable changes to the CTest Lab extension.
 - `CTest: Discover Tests` command:
   [#18](https://github.com/brobeson/ctest-lab/issues/18)
   - Use VS Code's `Test: Refresh Tests` command, instead.
+- Notice of which build directory CTest Lab will use when the extension
+  activates.
 
 ## [0.2.0] — 2022-09-06
 
