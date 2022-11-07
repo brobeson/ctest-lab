@@ -4,6 +4,13 @@
 
 This file documents all notable changes to the CTest Lab extension.
 
+## [0.3.1] — 2022-11-06
+
+### Fixed
+
+- The extension now activates properly
+  [#24](https://github.com/brobeson/ctest-lab/issues/24)
+
 ## [0.3.0] — 2022-10-08
 
 ### Added
@@ -36,7 +43,8 @@ This file documents all notable changes to the CTest Lab extension.
 
 - Basic test discovery: [#2](https://github.com/brobeson/ctest-lab/issues/2)
 
-[unreleased]: https://github.com/brobeson/ctest-lab/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/brobeson/ctest-lab/compare/v0.3.1...HEAD
+[0.3.1]: https://github.com/brobeson/ctest-lab/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/brobeson/ctest-lab/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/brobeson/ctest-lab/compare/v0.1.0...v0.2.0
 [0.1.0]:

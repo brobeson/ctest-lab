@@ -23,4 +23,4 @@ inkscape \
   ${export_option} images/logo.png \
   images/logo.svg
 
-npm run compile
+# npm run package
