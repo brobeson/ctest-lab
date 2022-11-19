@@ -4,6 +4,13 @@
 
 This file documents all notable changes to the CTest Lab extension.
 
+## Next Release
+
+### Fixed
+
+- Activate the output channel before running the tests
+  [#25](https://github.com/brobeson/ctest-lab/issues/25)
+
 ## [0.3.1] — 2022-11-06
 
 ### Fixed

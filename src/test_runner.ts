@@ -29,6 +29,7 @@ export async function run_tests(
   test_queue.forEach((test) => run.started(test));
 
   try {
+    log.show(true); // true -> output channel does not take focus
     const command_result = await runCtestCommand(
       signal,
       log,
@@ -48,7 +49,6 @@ export async function run_tests(
     run.appendOutput(
       command_result.output.replaceAll("\r", "").replaceAll("\n", "\r\n")
     );
-    log.show(true); // true -> output channel does not take focus
   } catch (error: any) {
     vscode.window.showErrorMessage(error.message);
   }
