@@ -2,6 +2,8 @@
 <!-- heading is redundant in the produced HTML. -->
 <!-- markdownlint-disable MD041 -->
 
+![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/brobeson.ctest-lab?label=Current%20Version)
+
 <!-- prettier-ignore -->
 > ❗ **WARNING**
 >
@@ -13,8 +15,8 @@ There are other VS Code extensions tailored to specific test frameworks, such as
 Catch2 or gtest. CTest is not restricted to compiled executables using those
 frameworks. For example, you could have a test that runs a script to verify
 installation of your package. You could have a CTest fixture that downloads
-binary test data from the web. These types of tests and test relationships are
-not captured by other extensions.
+binary test data from the Internet. These types of tests and test relationships
+are not captured by other extensions.
 
 ## Getting Started
 
@@ -51,23 +53,15 @@ refresh the tests.
 
 After CTest Lab discovers your tests, you can run them in the Testing View. You
 can run all your tests with one command, or run individual tests. Use the play
-buttons in the Testing View to run tests. If a test fails, click the _Show
-Output_ button in the Testing View. This shows the test output in an integrated
-terminal.
-
-<!-- prettier-ignore -->
-> ❗ **WARNING**
->
-> CTest Lab does not invoke `ctest` to run your tests; it runs the actual
-> executables. Therefore, some features of CTest are not used. For example, if a
-> test has the `REQUIRED_FILES` property defined, the test will run even if the
-> files are not present. This is a temporary limitation; I plan to fix it in the
-> next minor release.
+buttons in the Testing View to run tests. When you run tests, CTest Lab
+activates the CTest output channel so you can see the test output.
 
 ## The Testing View
 
 CTest Lab provides ways for you to interact with your tests in the Testing View.
 
+<!-- prettier-ignore -->
+<!--
 ### Test Tags
 
 VS Code's test API provides support for test tags. Users can filter tests by tag
@@ -89,20 +83,17 @@ add_executable(end_to_end_test e2e_test.cpp)
 add_test(NAME end_to_end_test COMMAND end_to_end_test)
 set_tests_properties(end_to_end_test PROPERTIES LABELS "e2e")
 ```
+-->
 
 ### Disabled Tests
 
 CTest Lab appends "(Disabled)" to the test name in the Testing view if the a
 test's
 [`DISABLED` property](https://cmake.org/cmake/help/latest/prop_test/DISABLED.html)
-is set to `true`. CTest Lab also adds "disabled" to the list of test tags. This
-allows you to quickly see which tests are disabled.
+is set to `true`.
 
-## Road Map
+### Skipped Tests
 
-| Done? |                             Version                              | Description                                   |
-| :---: | :--------------------------------------------------------------: | :-------------------------------------------- |
-|  ✅   | [Version 0.1](https://github.com/brobeson/ctest-lab/milestone/1) | Implement test discovery                      |
-|       | [Version 0.2](https://github.com/brobeson/ctest-lab/milestone/2) | Implement test execution                      |
-|       | [Version 0.3](https://github.com/brobeson/ctest-lab/milestone/2) | Use `ctest` to execute tests                  |
-|       | [Version 1.0](https://github.com/brobeson/ctest-lab/milestone/2) | Finalize functionality for production release |
+CTest sometimes skips a test, usually when a required resource is unavailable.
+These tests show as "Not Run" in the CTest output and as failed tests in the
+Test view.
