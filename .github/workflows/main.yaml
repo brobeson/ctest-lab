@@ -20,28 +20,36 @@ jobs:
     runs-on: ${{matrix.os}}
     steps:
       - uses: actions/checkout@v3
-      - if: runner.os == 'Linux'
-        name: Install Inkscape
+
+      - name: Install Inkscape
+        if: runner.os == 'Linux'
         run: sudo apt install inkscape
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
+
       - name: Install Packages and Tools
         run: |
           npm install
           npm install --global vsce
+
       - name: Check Code Format
         run: npx prettier --check .
-      - if: runner.os == 'Linux'
-        name: Run Tests on Linux
+
+      - name: Run Tests on Linux
+        if: runner.os == 'Linux'
         run: xvfb-run --auto-servernum npm test
-      - if: runner.os != 'Linux'
-        name: Run Tests on Windows & MacOS
+
+      - name: Run Tests on Windows & MacOS
+        if: runner.os != 'Linux'
         run: npm test
-      - if: runner.os == 'Linux'
-        name: Create a VSIX Package
+
+      - name: Create a VSIX Package
+        if: runner.os == 'Linux'
         run: vsce package
-      - if: runner.os == 'Linux'
-        name: Package Test
+
+      - name: Package Test
+        if: runner.os == 'Linux'
         run: ./src/test/package_test.sh

@@ -22,5 +22,3 @@ inkscape \
   --export-height 256 \
   ${export_option} images/logo.png \
   images/logo.svg
-
-# npm run package
