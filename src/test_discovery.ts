@@ -68,19 +68,31 @@ export async function refresh_tests(
 
         let tests: vscode.TestItem[] = [];
         let id = 0;
+        let undiscoverable_tests: string[] = [];
         for (const test of config.tests) {
-          // if two tests have the same name, their ids will be the same. Added
-          // a serial id to differentiate colliding names
-          let test_item = test_controller.createTestItem(
-            `${id++}-${test.name}`,
-            test.name
-          );
-          test_item.tags = get_test_tags(test.properties);
-          test_item.description = get_test_description(test.properties);
-          tests.push(test_item);
+          if (test.name.includes("NOT_BUILT")) {
+            undiscoverable_tests.push(test.name);
+          } else {
+            // If two tests have the same name, their ids will be the same.
+            // Added a serial ID to differentiate colliding names.
+            let test_item = test_controller.createTestItem(
+              `${id++}-${test.name}`,
+              test.name
+            );
+            test_item.tags = get_test_tags(test.properties);
+            test_item.description = get_test_description(test.properties);
+            tests.push(test_item);
+          }
         }
         test_controller.items.replace(tests);
         log.appendLine(`found ${test_controller.items.size} tests`);
+        if (undiscoverable_tests.length > 0) {
+          log.appendLine("Discovered unbuilt or otherwise unrunnable tests:");
+          undiscoverable_tests.forEach((value) => {
+            log.appendLine(`  ${value}`);
+          });
+          log.show(true);
+        }
         resolve();
       })
       .catch((err) => {
