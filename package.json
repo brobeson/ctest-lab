@@ -2,7 +2,7 @@
   "name": "ctest-lab",
   "displayName": "CTest Lab",
   "description": "Discover, filter, and run tests registered with CTest.",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "publisher": "brobeson",
   "author": {
     "name": "brobeson",
