@@ -27,7 +27,7 @@ CTest.
 
 ## Roadmap
 
-[![GitHub milestone](https://img.shields.io/github/milestones/progress/brobeson/ctest-lab/3)](https://github.com/brobeson/ctest-lab/milestone/3)
+[![GitHub milestone](https://img.shields.io/github/milestones/progress/brobeson/ctest-lab/5)](https://github.com/brobeson/ctest-lab/milestone/5)
 
 ## User Manual
 
