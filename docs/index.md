@@ -56,6 +56,13 @@ can run all your tests with one command, or run individual tests. Use the play
 buttons in the Testing View to run tests. When you run tests, CTest Lab
 activates the CTest output channel so you can see the test output.
 
+If you have the
+[cmake-tools extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
+installed, CTest Lab will run the default build command prior to running tests.
+Note that this does not affect test discovery. If you have new tests to
+discover, you need to manually build and run test discovery. You can disable
+this functionality with the `ctest-lab.buildBeforeRun` setting.
+
 ## The Testing View
 
 CTest Lab provides ways for you to interact with your tests in the Testing View.

@@ -7,6 +7,9 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(log_channel);
   log_channel.appendLine("CTest Lab is available.");
 
+  const cmakeToolsAvailable =
+    vscode.extensions.getExtension("ms-vscode.cmake-tools") !== undefined;
+
   const controller = vscode.tests.createTestController(
     "ctest-lab-tests",
     "CTest"
@@ -20,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
     "Run",
     vscode.TestRunProfileKind.Run,
     (request, token) => {
-      run_tests(controller, log_channel, request, token);
+      run_tests(controller, log_channel, request, token, cmakeToolsAvailable);
     }
   );
 

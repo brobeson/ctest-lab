@@ -18,7 +18,8 @@ export async function run_tests(
   test_controller: vscode.TestController,
   log: vscode.OutputChannel,
   run_request: vscode.TestRunRequest,
-  cancel_token: vscode.CancellationToken
+  cancel_token: vscode.CancellationToken,
+  cmakeToolsAvailable: boolean
 ) {
   const abort_controller = new AbortController();
   const { signal } = abort_controller;
@@ -27,6 +28,10 @@ export async function run_tests(
   const run = test_controller.createTestRun(run_request);
   const test_queue = get_test_list(run_request, test_controller);
   test_queue.forEach((test) => run.started(test));
+
+  if (!(await runBuild(cmakeToolsAvailable, test_queue, run))) {
+    return;
+  }
 
   try {
     log.show(true); // true -> output channel does not take focus
@@ -141,4 +146,23 @@ function get_test_list(
     controller.items.forEach((test) => test_queue.push(test));
   }
   return test_queue;
+}
+
+async function runBuild(
+  cmakeToolsAvailable: boolean,
+  testQueue: vscode.TestItem[],
+  run: vscode.TestRun
+): Promise<boolean> {
+  if (cmakeToolsAvailable) {
+    if (
+      ((await vscode.commands.executeCommand("cmake.build")) as number) !== 0
+    ) {
+      testQueue.forEach((testItem) => {
+        run.failed(testItem, new vscode.TestMessage("Build failed."));
+      });
+      run.end();
+      return false;
+    }
+  }
+  return true;
 }

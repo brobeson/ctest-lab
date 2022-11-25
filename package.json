@@ -43,9 +43,14 @@
     "configuration": {
       "title": "ctest-lab",
       "properties": {
+        "ctest-lab.buildBeforeRun": {
+          "type": "boolean",
+          "description": "Run cmake-tools' build command before running tests.",
+          "default": true
+        },
         "ctest-lab.buildDirectory": {
           "type": "string",
-          "description": ""
+          "description": "Path to the project build directory. CTest Lab uses this if `cmake.buildDirectory` is unavailable."
         }
       }
     }

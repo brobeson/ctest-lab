@@ -10,6 +10,7 @@ CTest.
 
 - Discover tests registered with CTest.
 - Run tests from the Test view in VS Code.
+- Automatically build before running tests.
 - Visualize passed, failed, disabled, and skipped tests.
 <!-- - Filter tests by CTest `LABELS` property. -->
 
@@ -23,14 +24,10 @@ CTest.
   variables, please comment on
   [#7](https://github.com/brobeson/ctest-lab/issues/7); I haven't found any
   documentation for this.
-- CTest Lab includes tests that are not built in the discovery results. See
-  [#12](https://github.com/brobeson/ctest-lab/issues/12) for details.
 
 ## Roadmap
 
-[![GitHub milestones](https://img.shields.io/github/milestones/open/brobeson/ctest-lab?color=blue&label=Open%20Milestones)](https://github.com/brobeson/ctest-lab/milestones)
 [![GitHub milestone](https://img.shields.io/github/milestones/progress/brobeson/ctest-lab/3)](https://github.com/brobeson/ctest-lab/milestone/3)
-[![GitHub milestones](https://img.shields.io/github/milestones/closed/brobeson/ctest-lab?label=Completed%20Milestones)](https://github.com/brobeson/ctest-lab/milestones?state=closed)
 
 ## User Manual
 
