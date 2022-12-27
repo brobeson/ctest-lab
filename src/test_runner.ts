@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { spawn } from "child_process";
+import * as os from "os";
 import { get_build_directory } from "./extension_helpers";
 import * as test_results from "./test_results";
 
@@ -67,7 +68,13 @@ async function runCtestCommand(
 ): Promise<{ output: string; code: number | null }> {
   return new Promise((resolve, reject) => {
     const command = "ctest";
-    const args = ["--output-on-failure", "--output-junit", test_results_file];
+    const args = [
+      "--output-on-failure",
+      "--output-junit",
+      test_results_file,
+      "--parallel",
+      get_parallel_count().toString(),
+    ];
     if (testName) {
       args.push("--tests-regex", testName);
     }
@@ -178,4 +185,19 @@ async function runBuild(
     }
   }
   return true;
+}
+
+function get_parallel_count(): number {
+  const config = vscode.workspace.getConfiguration("cmake");
+  let jobs = 0;
+  if (config.has("ctest.parallelJobs")) {
+    jobs = config.get("ctest.parallelJobs") as number;
+  }
+  if (jobs === 0 && config.has("parallelJobs")) {
+    jobs = config.get("parallelJobs") as number;
+  }
+  if (jobs === 0) {
+    jobs = os.cpus().length;
+  }
+  return jobs;
 }

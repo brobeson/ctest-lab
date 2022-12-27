@@ -63,6 +63,12 @@ Note that this does not affect test discovery. If you have new tests to
 discover, you need to manually build and run test discovery. You can disable
 this functionality with the `ctest-lab.buildBeforeRun` setting.
 
+CTest Lab uses the cmake-tools `cmake.ctest.parallelJobs` and
+`cmake.parallelJobs` settings for running tests in parallel. If both settings
+are not set, or are set to 0, then CTest Lab uses the number of available CPU
+cores. The order of precedence is `cmake.ctest.parallelJobs`, then
+`cmake.parallelJobs`, and finally the number of available cores.
+
 ## The Testing View
 
 CTest Lab provides ways for you to interact with your tests in the Testing View.

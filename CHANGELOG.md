@@ -8,6 +8,9 @@ This file documents all notable changes to the CTest Lab extension.
 
 ### Added
 
+- [[#31](https://github.com/brobeson/ctest-lab/issues/31) Run tests in parallel.
+  Use `cmake.ctest.parallelJobs`, then `cmake.parallelJobs`, then the number of
+  CPU cores to determine the number of jobs.
 - [#32](https://github.com/brobeson/ctest-lab/issues/32) The test view shows
   "(not run)" next to tests which CTest reports as not run.
 
