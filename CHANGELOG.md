@@ -4,6 +4,13 @@
 
 This file documents all notable changes to the CTest Lab extension.
 
+## [0.5.0] — Unreleased
+
+### Added
+
+- [#32](https://github.com/brobeson/ctest-lab/issues/32) The test view shows
+  "(not run)" next to tests which CTest reports as not run.
+
 ## [0.4.0] — 2022-11-24
 
 ### Added
@@ -62,6 +69,7 @@ This file documents all notable changes to the CTest Lab extension.
 
 - [#2](https://github.com/brobeson/ctest-lab/issues/2) Basic test discovery
 
+[0.5.0]: https://github.com/brobeson/ctest-lab/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/brobeson/ctest-lab/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/brobeson/ctest-lab/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/brobeson/ctest-lab/compare/v0.2.0...v0.3.0

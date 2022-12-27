@@ -110,13 +110,12 @@ function update_test(
   result: test_results.TestResult
 ) {
   switch (result.status) {
+    case test_results.ctest_status.notrun:
+      run.failed(test, new vscode.TestMessage(result.output.join("\n")));
+      break;
     case test_results.ctest_status.run:
       run.passed(test, result.time);
       break;
-    case test_results.ctest_status.notrun:
-    // CTest categorizes "not run" tests as failed. These are tests that don't
-    // run if they should have, but failed some prerequisite. An example is if
-    // a required file is missing.
     case test_results.ctest_status.fail:
       run.failed(
         test,
@@ -132,6 +131,20 @@ function update_test(
         `Unknown CTest status found in test results: ${result.status}`
       );
       break;
+  }
+  reset_test_description(test, result.status);
+}
+
+function reset_test_description(test: vscode.TestItem, run_status: string) {
+  if (run_status === test_results.ctest_status.disabled) {
+    test.description = "(disabled)";
+  } else if (run_status === test_results.ctest_status.notrun) {
+    test.description = "(not run)";
+  } else if (
+    test.description === "(not run)" ||
+    test.description === "(disabled)"
+  ) {
+    test.description = "";
   }
 }
 

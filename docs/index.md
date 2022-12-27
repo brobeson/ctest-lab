@@ -103,4 +103,4 @@ is set to `true`.
 
 CTest sometimes skips a test, usually when a required resource is unavailable.
 These tests show as "Not Run" in the CTest output and as failed tests in the
-Test view.
+Test view, with the description "(not run)".
