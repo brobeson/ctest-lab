@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as ctest from "./test_discovery";
-import { run_tests } from "./test_runner";
+import { run_tests, configureRunProfile } from "./test_runner";
 
 export function activate(context: vscode.ExtensionContext) {
   let log_channel = vscode.window.createOutputChannel("CTest");
@@ -20,12 +20,21 @@ export function activate(context: vscode.ExtensionContext) {
     ctest.refresh_tests(controller, log_channel, token);
 
   controller.createRunProfile(
-    "Run",
+    "All Tests",
     vscode.TestRunProfileKind.Run,
     (request, token) => {
       run_tests(controller, log_channel, request, token, cmakeToolsAvailable);
     }
   );
+
+  const unitProfile = controller.createRunProfile(
+    "Unit Tests",
+    vscode.TestRunProfileKind.Run,
+    (request, token) => {
+      run_tests(controller, log_channel, request, token, cmakeToolsAvailable);
+    }
+  );
+  unitProfile.configureHandler = configureRunProfile;
 
   ctest.refresh_tests(controller, log_channel);
 }

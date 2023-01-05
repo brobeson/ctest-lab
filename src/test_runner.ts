@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { spawn } from "child_process";
+import { spawn, spawnSync } from "child_process";
 import * as os from "os";
 import { get_build_directory } from "./extension_helpers";
 import * as test_results from "./test_results";
@@ -200,4 +200,38 @@ function get_parallel_count(): number {
     jobs = os.cpus().length;
   }
   return jobs;
+}
+
+export function configureRunProfile() {
+  const labels = getCTestLabels();
+  vscode.window.showQuickPick(labels, {
+    canPickMany: true,
+    title: "CTest Labels",
+  });
+}
+
+function getCTestLabels() {
+  const process = spawnSync("ctest", ["--print-labels"], {
+    cwd: get_build_directory(),
+  });
+  if (process.status !== 0) {
+    vscode.window.showErrorMessage("Failed to get CTest labels.");
+  }
+  const lines = process.stdout.toString().split("\n");
+  // lines[0] and lines[1] should be throw away output
+  if (lines.length < 3) {
+    vscode.window.showErrorMessage("Not enough output");
+  }
+  if (
+    !(lines[0].startsWith("Test project") && lines[1].startsWith("All Labels"))
+  ) {
+    vscode.window.showErrorMessage(
+      "Unexpected output from 'ctest --print-labels"
+    );
+  }
+  const labels: string[] = [];
+  lines.slice(2, lines.length - 1).forEach((line: string) => {
+    labels.push(line.trim());
+  });
+  return labels.sort();
 }
