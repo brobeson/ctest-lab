@@ -26,7 +26,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 # url: https://just-the-docs.github.io
 github_username: brobeson
 # show_downloads: true
-# markdown: kramdown
+markdown: kramdown
 # toc: true
 # layout: single
 
@@ -37,7 +37,7 @@ github_username: brobeson
 #   - jekyll-remote-theme
 #   - jekyll-feed
 remote_theme: just-the-docs/just-the-docs@main
-# theme: just-the-docs
+theme: just-the-docs
 # logo: logo.svg
 # TODO Convert logo.svg to logo.ico and set it as the favicon. Do that in the
 # publish workflow; don't commit the icon to the repository.
@@ -46,7 +46,12 @@ remote_theme: just-the-docs/just-the-docs@main
 aux_links:
   Marketplace: https://marketplace.visualstudio.com/items?itemName=brobeson.ctest-lab
   Repository: https://github.com/brobeson/ctest-lab
-  # Template Repository: https://github.com/just-the-docs/just-the-docs-template
+# nav_external_links:
+#   - title: Marketplace
+#     url: https://marketplace.visualstudio.com/items?itemName=brobeson.ctest-lab
+#   - title: Repository
+#     url: https://github.com/brobeson/ctest-lab
+# Template Repository: https://github.com/just-the-docs/just-the-docs-template
 color_scheme: dark
 callouts:
   warning:

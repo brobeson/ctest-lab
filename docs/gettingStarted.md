@@ -1,6 +1,7 @@
 ---
 title: Getting Started
 layout: default
+nav_order: 2
 ---
 
 
@@ -47,19 +48,16 @@ If you have the [cmake-tools
 extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools)
 installed, CTest Lab can run the default build command prior to running tests.
 You can disable this functionality with the
-[`ctest-lab.buildBeforeRun`](settings.md#ctest-labbuildbeforerun) setting.  Note
+[`ctest-lab.buildBeforeRun`](settings#ctest-labbuildbeforerun) setting.  Note
 that this does not affect test discovery. If you have new tests to discover, you
 need to manually build and run test discovery.
-
-{: .warning }
-> Why doesn't the cross-reference to other pages work?
 
 When the tests start, CTest Lab activates the CTest output channel so you can
 see the test output.
 
 {: .warning }
-> At this time, you cannot view individual test output via the Test View. This
-> feature is on my roadmap, but I have not figured out how to make it work, yet.
+At this time, you cannot view individual test output via the Test View. This
+feature is on my roadmap, but I have not figured out how to make it work, yet.
 
 ## The Testing View
 

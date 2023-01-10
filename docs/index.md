@@ -1,6 +1,7 @@
 ---
 title: Home
-layout: default
+layout: home
+nav_order: 1
 ---
 
 <!-- Jekyll and Github Pages process this file into a website. Markdown lint -->
@@ -12,7 +13,7 @@ layout: default
 ![Visual Studio Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/brobeson.ctest-lab?label=Current%20Version)
 
 {: .warning }
-> This extension is still a preview lacking some major functionality.
+This extension is still a preview lacking some major functionality.
 
 ## Why CTest Lab
 
