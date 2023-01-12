@@ -38,7 +38,7 @@ markdown: kramdown
 #   - jekyll-feed
 remote_theme: just-the-docs/just-the-docs@main
 # theme: just-the-docs
-# logo: logo.svg
+logo: logo.svg
 # TODO Convert logo.svg to logo.ico and set it as the favicon. Do that in the
 # publish workflow; don't commit the icon to the repository.
 # favicon_ico: logo.ico
